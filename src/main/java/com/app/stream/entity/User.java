@@ -2,7 +2,6 @@ package com.app.stream.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -12,6 +11,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @ManyToOne
+    @JoinColumn(name = "rol_id")
+    private Rol rol_id;
 
     @Column(nullable = false, unique = true, length = 50)
     private String email;

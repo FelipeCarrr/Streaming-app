@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.json.JSONObject;
+
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -24,18 +26,27 @@ public class AuthController {
     private JWTUtil jwtUtil;
 
     @RequestMapping(value = "api/auth/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody User userReq){
-        try{
+    public ResponseEntity login(@RequestBody User userReq) {
+        try {
             message = new Message();
             user = userRepository.findByEmail(userReq.getEmail());
-            if(passwordEncoder.matches(userReq.getPassword(), user.getPassword())){
-                String token = jwtUtil.create(String.valueOf(user.getId()),user.getEmail());
-                return message.viewMessage(HttpStatus.OK,"Login",token);
+            if (passwordEncoder.matches(userReq.getPassword(), user.getPassword())) {
+                String token = jwtUtil.create(String.valueOf(user.getId()), user.getEmail());
+
+                // Obtén el rol del usuario
+                String userRole = user.getRol_id().getRol_name(); // Accede al rol a través de la relación "rol_id"
+
+                // Crea un objeto JSON que incluye el token y el rol
+                JSONObject responseJson = new JSONObject();
+                responseJson.put("token", token);
+                responseJson.put("userRole", userRole);
+
+                return ResponseEntity.ok(responseJson.toString()); // Devuelve la respuesta JSON con el token y el rol
             }
             return message.viewMessage(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "invalid username or password");
-        }catch (Exception e){
-            return message.viewMessage(HttpStatus.INTERNAL_SERVER_ERROR,"error","An error occurred!"+e.getLocalizedMessage());
-
+        } catch (Exception e) {
+            return message.viewMessage(HttpStatus.INTERNAL_SERVER_ERROR, "error", "An error occurred!" + e.getLocalizedMessage());
         }
     }
+
 }

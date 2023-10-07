@@ -1,6 +1,8 @@
 package com.app.stream.controllers;
 
+import com.app.stream.entity.Rol;
 import com.app.stream.entity.User;
+import com.app.stream.repository.RolRepository;
 import com.app.stream.repository.UserRepository;
 import com.app.stream.util.JWTUtil;
 import com.app.stream.util.Message;
@@ -19,6 +21,8 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    private RolRepository rolRepository;
     private Message message = new Message();
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -42,17 +46,30 @@ public class UserController {
     }
 
     @RequestMapping(value = "api/users", method = RequestMethod.POST)
-    public ResponseEntity createUser(@RequestBody User user){
-        Map<String,String> response = new LinkedHashMap<>();
-        try{
+    public ResponseEntity createUser(@RequestBody User user) {
+        Map<String, String> response = new LinkedHashMap<>();
+        try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepository.save(user);
-            return message.viewMessage(HttpStatus.OK,"success","registered user success!");
-        }catch (Exception e){
-            return message.viewMessage(HttpStatus.INTERNAL_SERVER_ERROR,"error","An error occurred while registering the user!");
-        }
 
+            // Busca el rol "User" por su rol_id
+            Rol userRole = rolRepository.findById(2L).orElse(null);
+
+            // Verifica si el rol "User" existe
+            if (userRole != null) {
+                // Asigna el rol al usuario
+                user.setRol_id(userRole);
+
+                userRepository.save(user);
+
+                return message.viewMessage(HttpStatus.OK, "success", "registered user success!");
+            } else {
+                return message.viewMessage(HttpStatus.NOT_FOUND, "error", "Role 'User' not found!");
+            }
+        } catch (Exception e) {
+            return message.viewMessage(HttpStatus.INTERNAL_SERVER_ERROR, "error", "An error occurred while registering the user!");
+        }
     }
+
 
     @RequestMapping(value = "api/users", method = RequestMethod.GET)
     public List<User> listUsers(@RequestHeader(value = "Authorization") String token){

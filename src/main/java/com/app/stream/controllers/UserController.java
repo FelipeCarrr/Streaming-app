@@ -45,26 +45,20 @@ public class UserController {
         return null;
     }
 
-    @RequestMapping(value = "api/users", method = RequestMethod.POST)
     public ResponseEntity createUser(@RequestBody User user) {
         Map<String, String> response = new LinkedHashMap<>();
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-            // Busca el rol "User" por su rol_id
-            Rol userRole = rolRepository.findById(2L).orElse(null);
+            // Obtén el rol "User" por su nombre (asumiendo que "User" es un nombre de rol válido en tu base de datos)
+            Rol userRole = rolRepository.findByRolName("User");
 
-            // Verifica si el rol "User" existe
-            if (userRole != null) {
-                // Asigna el rol al usuario
-                user.setRol_id(userRole);
+            // Asigna el rol al usuario
+            user.setRol_id(userRole);
 
-                userRepository.save(user);
+            userRepository.save(user);
 
-                return message.viewMessage(HttpStatus.OK, "success", "registered user success!");
-            } else {
-                return message.viewMessage(HttpStatus.NOT_FOUND, "error", "Role 'User' not found!");
-            }
+            return message.viewMessage(HttpStatus.OK, "success", "registered user success!");
         } catch (Exception e) {
             return message.viewMessage(HttpStatus.INTERNAL_SERVER_ERROR, "error", "An error occurred while registering the user!");
         }

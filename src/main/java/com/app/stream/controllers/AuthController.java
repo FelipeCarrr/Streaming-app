@@ -34,7 +34,7 @@ public class AuthController {
                 String token = jwtUtil.create(String.valueOf(user.getId()), user.getEmail());
 
                 // Obtén el rol del usuario
-                String userRole = user.getRol_id().getRol_name(); // Accede al rol a través de la relación "rol_id"
+                String userRole = user.getRol_id().getRolName(); // Accede al rol a través de la relación "rol_id"
 
                 // Crea un objeto JSON que incluye el token y el rol
                 JSONObject responseJson = new JSONObject();

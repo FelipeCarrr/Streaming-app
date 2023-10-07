@@ -7,7 +7,6 @@ import com.app.stream.repository.UserRepository;
 import com.app.stream.util.JWTUtil;
 import com.app.stream.util.Message;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,6 +45,7 @@ public class UserController {
         return null;
     }
 
+    @RequestMapping(value = "api/users", method = RequestMethod.POST)
     public ResponseEntity createUser(@RequestBody User user) {
         Map<String, String> response = new LinkedHashMap<>();
         try {
@@ -53,8 +53,6 @@ public class UserController {
 
             // Obtén el rol "User" por su nombre (asumiendo que "User" es un nombre de rol válido en tu base de datos)
             Rol userRole = rolRepository.findByRolName("User");
-
-            // Asigna el rol al usuario
             user.setRol_id(userRole);
 
             userRepository.save(user);

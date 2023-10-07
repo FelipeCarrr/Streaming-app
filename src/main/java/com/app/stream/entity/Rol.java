@@ -13,5 +13,21 @@ public class Rol {
     private long rol_id;
 
     @Column(name = "rol_name", length = 45, nullable = false)
-    private String rol_name;
+    private String rolName;
+
+    public long getRol_id() {
+        return rol_id;
+    }
+
+    public void setRol_id(long rol_id) {
+        this.rol_id = rol_id;
+    }
+
+    public String getRolName() {
+        return rolName;
+    }
+
+    public void setRolName(String rolName) {
+        this.rolName = rolName;
+    }
 }

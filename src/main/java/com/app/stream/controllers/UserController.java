@@ -22,6 +22,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
     private RolRepository rolRepository;
     private Message message = new Message();
     @Autowired
